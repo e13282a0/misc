@@ -7,16 +7,17 @@
 // WiFi connection
 const char* ssid = YOURSSID;
 const char* password = YOURPASSWORD;
+const char* id = "3"; // set different ids when running multipled sensors
 char server[] = YOURSERVERADRESS;
 int port = 80;
 WiFiClient client;
 const unsigned long postingInterval = 1800L * 1000000L; // delay between updates, in microseconds
 
 
-//DHT 
 #include <DHT.h>
 #define DHTPIN 13
 #define DHTTYPE DHT11   // DHT 11 
+
 DHT dht(DHTPIN, DHTTYPE,16);
 
 // needed to avoid link error on ram check
@@ -26,8 +27,8 @@ extern "C"
 }
 // Messung
 value_type domeasuring() {
-  digitalWrite(4, LOW);
-  delay(300);
+  //digitalWrite(4, LOW);
+  //delay(300);
   value_type retval;
   retval.hum = dht.readHumidity();
   if (isnan(retval.hum))
@@ -38,7 +39,7 @@ value_type domeasuring() {
     retval.temp=999;
     
   retval.soil = analogRead(A0);
-  digitalWrite(4, HIGH);
+  //digitalWrite(4, HIGH);
   Serial.println("Humidity:"+String(retval.hum,2)+"\tTemperature:"+String(retval.temp,2)+"\tSoil:"+String(retval.soil,2));
   return retval;
 }
@@ -56,7 +57,7 @@ void httpRequest(float h, float t, float s) {
   url += String(h,2);
   url += "&soil=";
   url += String(s,2);
-  url += "&ID=";
+  url += "&id=";
   url += id;
   
   // if there's a successful connection:
@@ -79,8 +80,6 @@ void WiFiStart()
   // Connect to WiFi network
   Serial.print("Connecting to ");
   Serial.println(ssid);
-
-  
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) 
@@ -104,6 +103,7 @@ void setup() {
 
   Serial.begin(115200);
   Serial.println("WLAN Temperatur und Feuchtigkeitslogger - NRNT");
+  digitalWrite(4, LOW);
   delay(1200);
   // Erste Messung
   values[0]= domeasuring();
@@ -157,4 +157,3 @@ void setup() {
 void loop() {
  // do nothing
 }
-
