@@ -56,6 +56,9 @@ void httpRequest(float h, float t, float s) {
   url += String(h,2);
   url += "&soil=";
   url += String(s,2);
+  url += "&ID=";
+  url += id;
+  
   // if there's a successful connection:
   if (client.connect(server, port)) {
     Serial.println("connecting...");
@@ -154,6 +157,4 @@ void setup() {
 void loop() {
  // do nothing
 }
-
-
 
